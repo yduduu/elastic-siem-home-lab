@@ -1,256 +1,287 @@
 # 🛡️ Elastic SIEM Home Lab
 
-A fully functional Security Information and Event Management (SIEM) lab built on Elastic Stack, deployed using Docker on Windows. This project simulates a real SOC (Security Operations Center) environment for threat detection, log analysis, and security monitoring.
+A fully functional Security Information and Event Management (SIEM) lab built using the Elastic Stack and deployed with Docker on Windows. This project simulates a real Security Operations Center (SOC) environment for log collection, threat detection, alert generation, and security monitoring.
 
-\---
+---
 
 ## 📌 Project Overview
 
-This home lab demonstrates end-to-end SIEM capabilities including log ingestion, threat detection, alert generation, and security monitoring — mirroring what analysts do in enterprise SOC environments.
+This home lab demonstrates the complete SIEM workflow, from collecting Windows security logs to generating security alerts using Elastic Security detection rules.
 
 **Built by:** Young Li Vui  
 **Date:** June 2026  
-**Goal:** Internship portfolio project for Cybersecurity / SOC Analyst roles
+**Project Type:** Cybersecurity Home Lab  
+**Focus Areas:** SIEM, Threat Detection, Log Analysis, Security Monitoring
 
-\---
+---
 
 ## 🏗️ Architecture
 
-```
-Windows Host (Your Machine)
+```text
+Windows Host
 │
 ├── Docker
-│   ├── Elasticsearch        ← Log storage \& search engine
-│   └── Kibana               ← Visualization \& SIEM dashboard
+│   ├── Elasticsearch
+│   │     └── Log Storage & Search Engine
+│   │
+│   └── Kibana
+│         └── SIEM Dashboard & Alerting
 │
-├── Winlogbeat               ← Windows Event Log collector
-│   └── Sends logs → Elasticsearch
-││
+├── Winlogbeat
+│     └── Collects Windows Event Logs
+│
 └── Windows Audit Policy
-    ├── Event ID 4624        ← Successful Logon
-    ├── Event ID 4688        ← Process Creation
-    └── Event ID 1102        ← Audit Log Cleared
+      ├── Event ID 4624 (Successful Logon)
+      ├── Event ID 4625 (Failed Logon)
+      ├── Event ID 4688 (Process Creation)
+      └── Event ID 1102 (Audit Log Cleared)
 ```
 
-\---
+---
 
-## 🧰 Tools \& Technologies
+## 🧰 Tools & Technologies
 
-|Tool|Purpose|
-|-|-|
-|Elasticsearch 8.18|Log storage, indexing, search|
-|Kibana 8.18|SIEM dashboards, alerts, investigation|
-|Docker|Container deployment|
-|Winlogbeat|Windows Event Log collection|
-|Windows Audit Policy|Process creation \& security logging|
+| Tool | Purpose |
+|--------|--------|
+| Elasticsearch 8.18 | Log storage and indexing |
+| Kibana 8.18 | Visualization and SIEM platform |
+| Elastic Security | Detection rules and alerting |
+| Winlogbeat | Windows Event Log collection |
+| Docker Desktop | Container deployment |
+| Windows Audit Policy | Security event generation |
+| KQL | Log investigation and threat hunting |
 
-\---
+---
 
 ## ⚙️ Lab Setup
 
 ### Prerequisites
 
-* Windows 10/11
-* Docker Desktop installed
-* PowerShell (Administrator)
-* At least 8GB RAM
+- Windows 10/11
+- Docker Desktop
+- PowerShell (Administrator)
+- Minimum 8GB RAM
 
-### 1\. Deploy Elasticsearch \& Kibana with Docker
+### 1. Deploy Elasticsearch & Kibana
 
 ```yaml
-# docker-compose.yml
-version: '3'
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.18.0
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=true
-      - ELASTIC\_PASSWORD=your\_password
-    ports:
-      - "9200:9200"
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.18.0
-    environment:
-      - ELASTICSEARCH\_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH\_USERNAME=kibana\_system
-      - ELASTICSEARCH\_PASSWORD=your\_kibana\_password
-    ports:
-      - "5601:5601"
 ```
 
 ```powershell
 docker compose up -d
 ```
 
-### 2\. Configure Winlogbeat
+---
 
-Installed Winlogbeat on Windows host to collect:
+### 2. Configure Winlogbeat
 
-* Security logs (4624, 4625, 4688, 1102)
-* System logs
-* PowerShell logs
+Configured Winlogbeat to collect:
+
+- Security Logs
+- System Logs
+- PowerShell Logs
 
 ```yaml
-# winlogbeat.yml
-winlogbeat.event\_logs:
+winlogbeat.event_logs:
   - name: Security
   - name: System
   - name: Microsoft-Windows-PowerShell/Operational
-
-output.elasticsearch:
-  hosts: \["localhost:9200"]
-  username: "elastic"
-  password: "your\_password"
 ```
 
-### 3\. Enable Windows Process Creation Auditing
+---
+
+### 3. Enable Process Creation Auditing
 
 ```powershell
 auditpol /set /subcategory:"Process Creation" /success:enable
-auditpol /get /subcategory:"Process Creation"
-# Result: Success
 ```
 
-### 4\. Install Detection Rules
+Verification:
 
-In Kibana → Security → Rules → Add Elastic Rules
+```powershell
+auditpol /get /subcategory:"Process Creation"
+```
 
-Installed **500+ prebuilt detection rules** including:
+---
 
-* PowerShell Script with Log Clear Capabilities
-* Windows Event Logs Cleared
-* Suspicious Execution via Windows Subsystem for Linux
-* Privilege Escalation via Named Pipe Impersonation
-* Encoded PowerShell Command
+### 4. Install Elastic Security Detection Rules
 
-\---
+Installed and enabled Elastic Security prebuilt detection rules for Windows security monitoring and threat detection.
+
+Examples:
+
+- Windows Event Logs Cleared
+- Encoded PowerShell Command
+- PowerShell Script with Log Clear Capabilities
+- Suspicious Execution via Windows Subsystem for Linux
+- Privilege Escalation via Named Pipe Impersonation
+
+---
 
 ## 🔍 Security Events Collected
 
-|Event ID|Description|Status|
-|-|-|-|
-|4624|Successful Logon|✅ Collected|
-|4625|Failed Logon|✅ Collected|
-|4672|Special Privileges Assigned|✅ Collected|
-|4688|Process Creation|✅ Collected|
-|4798|User Group Enumeration|✅ Collected|
-|1102|Audit Log Cleared|✅ Collected|
-|5379|Credential Manager Read|✅ Collected|
+| Event ID | Description | Status |
+|-----------|------------|---------|
+| 4624 | Successful Logon | ✅ |
+| 4625 | Failed Logon | ✅ |
+| 4672 | Special Privileges Assigned | ✅ |
+| 4688 | Process Creation | ✅ |
+| 4798 | User Group Enumeration | ✅ |
+| 5379 | Credential Manager Read | ✅ |
+| 1102 | Audit Log Cleared | ✅ |
 
-\---
+---
 
-## 🚨 Alerts Generated
+## 🚨 Detection Rules & Alerts
 
-### Alert 1: Windows Event Logs Cleared
+### Windows Event Logs Cleared
 
-* **Rule:** Windows Event Logs Cleared
-* **Severity:** Low
-* **Risk Score:** 21
-* **Triggered by:** `wevtutil cl Security`
-* **Significance:** Log clearing is a common attacker anti-forensics technique (T1070.001 in MITRE ATT\&CK)
+**Rule:** Windows Event Logs Cleared
 
-\---
+**Severity:** Low
 
-## 📊 SIEM Capabilities Demonstrated
+**Risk Score:** 21
 
-* ✅ **Log Ingestion** — Windows security events flowing into Elasticsearch
-* ✅ **Log Storage \& Indexing** — winlogbeat-\* index with full ECS mapping
-* ✅ **Threat Detection** — 500+ rules monitoring for malicious behavior
-* ✅ **Alert Generation** — Real alerts triggered by simulated attack techniques
-* ✅ **Dashboard Visualization** — Event distribution, source IPs, user activity
-* ✅ **Log Investigation** — KQL queries in Kibana Discover
+**Event ID:** 1102
 
-\---
+**MITRE ATT&CK:**
+T1070.001 – Clear Windows Event Logs
+
+This alert was successfully triggered after clearing the Windows Security Log using:
+
+```powershell
+wevtutil cl Security
+```
+
+This technique is commonly used by attackers attempting to remove forensic evidence from compromised systems.
+
+---
 
 ## 🎯 Attack Simulations Performed
 
-|Technique|Command|MITRE ATT\&CK|
-|-|-|-|
-|Log Clearing|`wevtutil cl Security`|T1070.001|
-|Encoded PowerShell|`powershell -enc SQBFAFgA`|T1059.001|
-|Execution Policy Bypass|`powershell -ExecutionPolicy Bypass`|T1059.001|
-|System Enumeration|`whoami`, `ipconfig`, `net user`, `systeminfo`|T1082|
+| Technique | Command | MITRE ATT&CK |
+|------------|---------|-------------|
+| Log Clearing | `wevtutil cl Security` | T1070.001 |
+| Encoded PowerShell | `powershell -enc SQBFAFgA` | T1059.001 |
+| Execution Policy Bypass | `powershell -ExecutionPolicy Bypass` | T1059.001 |
+| System Enumeration | `whoami`, `ipconfig`, `net user`, `systeminfo` | T1082 |
 
-\---
+---
 
-## 📚 Key Learnings
+## 📊 SIEM Capabilities Demonstrated
 
-* Deploying and configuring Elastic Stack in a containerized environment
-* Understanding SIEM architecture and data flow
-* Windows Security Event Log analysis
-* Writing KQL queries for threat hunting
-* Configuring and managing detection rules
-* Simulating attacker techniques and observing SOC response workflow
-* Windows Event and Elastic Agent deployment for EDR capabilities
-* Detection Rule Configuration and Alert Investigation
+- ✅ Windows Event Log Collection
+- ✅ Log Ingestion with Winlogbeat
+- ✅ Elasticsearch Indexing
+- ✅ Security Monitoring
+- ✅ Detection Rule Management
+- ✅ Threat Detection
+- ✅ Security Alert Generation
+- ✅ Alert Investigation
+- ✅ Log Analysis
+- ✅ Threat Hunting using KQL
+- ✅ Windows Security Event Monitoring
 
-\---
-
-## 🔗 Related Projects
-
-* Malware Analysis Lab
-* Memory Forensics with Volatility
-* Network Design with Cisco Packet Tracer
-* Linux Administration
-
-\---
+---
 
 ## 📷 Screenshots
 
+### Process Creation Event Monitoring (Event ID 4688)
 
+Windows Security Event ID 4688 was successfully collected by Winlogbeat and ingested into Elasticsearch. This event records newly created processes and is commonly used for threat hunting, process monitoring, and suspicious activity detection.
 
-\# Elastic SIEM Home Lab
+![4688 Event](screenshots/process-creation-event-4688.png)
 
+---
 
+### Windows Event Log Cleared Event (Event ID 1102)
 
-\## Process Creation Event Monitoring (Event ID 4688)
+Windows Security Event ID 1102 was generated when the Windows Event Log was cleared. This event is important because attackers often attempt to clear logs to remove evidence of malicious activity. Winlogbeat successfully collected and forwarded the event to Elasticsearch for analysis.
 
+![1102 Event](screenshots/event-log-cleared-1102.png)
 
+---
 
-Windows Security Event ID 4688 was successfully collected by Winlogbeat and ingested into Elasticsearch.
+### Security Alert Generated by Elastic Security
 
+Elastic Security successfully detected Event ID 1102 using a prebuilt detection rule and automatically generated a security alert. This demonstrates the full detection workflow from Windows event generation to SIEM alerting.
 
+![Detection Alert](screenshots/windows-event-log-alert.png)
 
-!\[4688 Event](screenshots/process-creation-event-4688.png)
+---
 
+## 🔄 Security Monitoring Workflow
 
+```text
+Windows Host
+    ↓
+Windows Event Logs
+    ↓
+Winlogbeat
+    ↓
+Elasticsearch
+    ↓
+Kibana
+    ↓
+Elastic Security Rules
+    ↓
+Security Alerts
+```
 
-\---
+---
 
+## 🧠 Key Learnings
 
+- Deploying Elastic Stack using Docker
+- Configuring Winlogbeat for Windows log collection
+- Understanding SIEM architecture and workflows
+- Windows Security Event analysis
+- Detection rule management
+- Alert investigation and triage
+- Threat hunting with Kibana Query Language (KQL)
+- MITRE ATT&CK mapping
+- SOC monitoring fundamentals
 
-\## Windows Event Logs Cleared Detection
+---
 
+## 💼 Skills Demonstrated
 
+- SIEM Administration
+- Elasticsearch
+- Kibana
+- Elastic Security
+- Winlogbeat
+- Docker
+- Windows Event Logging
+- Threat Detection
+- Alert Investigation
+- Log Analysis
+- Threat Hunting
+- Security Monitoring
+- Incident Detection
 
-Elastic Security generated an alert after detecting Windows Event ID 1102.
+---
 
+## 📚 References
 
+- https://www.elastic.co/guide/en/security/current/index.html
+- https://www.elastic.co/guide/en/fleet/current/index.html
+- https://attack.mitre.org/
+- https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/
 
-!\[1102 Alert](screenshots/windows-event-log-cleared-alert.png)
+---
 
+## 🚀 Future Improvements
 
-
-\---
-
-
-
-\## Detection Rules
-
-
-
-Prebuilt Elastic Security rules were installed and enabled.
-
-
-
-!\[Detection Rules](screenshots/detection-rules.png)
-
-## 📄 References
-
-* [Elastic SIEM Documentation](https://www.elastic.co/guide/en/security/current/index.html)
-* [Elastic Agent Documentation](https://www.elastic.co/guide/en/fleet/current/index.html)
-* [MITRE ATT\&CK Framework](https://attack.mitre.org/)
-* [Windows Security Event IDs](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
-
+- Deploy Elastic Agent and Elastic Defend
+- Build custom detection rules
+- Integrate Sysmon logging
+- Create custom SOC dashboards
+- Simulate additional ATT&CK techniques
+- Perform incident response investigations
