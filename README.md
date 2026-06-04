@@ -1,4 +1,3 @@
-[README (2).md](https://github.com/user-attachments/files/28587008/README.2.md)
 # 🛡️ Elastic SIEM Home Lab
 
 A fully functional Security Information and Event Management (SIEM) lab built using the Elastic Stack and deployed with Docker on Windows. This project simulates a real Security Operations Center (SOC) environment — covering log collection, custom detection rule engineering, real alert generation, and SOC-style alert investigation and triage.
