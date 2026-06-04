@@ -197,11 +197,11 @@ This rule was built from scratch using Kibana's Detection Rules editor and succe
 
 **Elastic Security — 4 Medium Alerts fired by custom PowerShell rule:**
 
-![PowerShell Alerts Dashboard](screenshots/alerts-dashboard.png)
+![PowerShell Alerts Dashboard](alerts-dashboard.png)
 
 **Custom Detection Rule — Enabled and running:**
 
-![Detection Rule](screenshots/detection-rule.png)
+![Detection Rule](detection-rule.png)
 
 ---
 
@@ -211,7 +211,7 @@ After alerts fired, a full SOC-style investigation was performed in Kibana Secur
 
 **Alert detail showing forensic evidence:**
 
-![Alert Detail](screenshots/alert-detail.png)
+![Alert Detail](alert-detail.png)
 
 **Forensic fields extracted:**
 
@@ -237,7 +237,7 @@ After alerts fired, a full SOC-style investigation was performed in Kibana Secur
 5. Classified as **False Positive** (authorized lab activity)
 6. Closed alert — mirroring real SOC triage procedure
 
-![Investigation Note](screenshots/investigation-note.png)
+![Investigation Note](investigation-note.png)
 
 ---
 
