@@ -166,11 +166,11 @@ wevtutil cl Security
 
 **Kibana Discover — Event ID 1102 ingested from Winlogbeat:**
 
-![Event ID 1102 in Kibana Discover](event-log-cleared-1102.png)
+![Event ID 1102 in Kibana Discover](screenshots/event-log-cleared-1102.png)
 
 **Elastic Security Alert — Windows Event Logs Cleared fired:**
 
-![Windows Event Logs Cleared Alert](windows-event-log-alert.png)
+![Windows Event Logs Cleared Alert](screenshots/windows-event-log-alert.png)
 
 > Alert detail shows: event by user `Asus` on host `dudu`, Risk score 21, Status Open, rule description confirming this technique is used by attackers to destroy forensic evidence.
 
@@ -191,17 +191,17 @@ This rule was built from scratch using Kibana's Detection Rules editor and succe
 
 **Kibana Discover — 3,343 Event ID 4688 (Process Creation) documents ingested:**
 
-![Event ID 4688 in Kibana Discover](process-creation-event-4688.png)
+![Event ID 4688 in Kibana Discover](screenshots/process-creation-event-4688.png)
 
 > Shows `event.code: 4688`, `event.provider: Microsoft-Windows-Security-Auditing`, `message: A new process has been created`, host `Dudu` — confirming Winlogbeat is successfully shipping process creation events to Elasticsearch.
 
 **Elastic Security — 4 Medium Alerts fired by custom PowerShell rule:**
 
-![PowerShell Alerts Dashboard](alerts-dashboard.png)
+![PowerShell Alerts Dashboard](screenshots/alerts-dashboard.png)
 
 **Custom Detection Rule — Enabled and running:**
 
-![Detection Rule](detection-rule.png)
+![Detection Rule](screenshots/detection-rule.png)
 
 ---
 
@@ -211,7 +211,7 @@ After alerts fired, a full SOC-style investigation was performed in Kibana Secur
 
 **Alert detail showing forensic evidence:**
 
-![Alert Detail](alert-detail.png)
+![Alert Detail](screenshots/alert-detail.png)
 
 **Forensic fields extracted:**
 
@@ -237,7 +237,7 @@ After alerts fired, a full SOC-style investigation was performed in Kibana Secur
 5. Classified as **False Positive** (authorized lab activity)
 6. Closed alert — mirroring real SOC triage procedure
 
-![Investigation Note](investigation-note.png)
+![Investigation Note](screenshots/investigation-note.png)
 
 ---
 
